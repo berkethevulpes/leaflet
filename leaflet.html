@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Haritası</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 500px; /* Harita yüksekliği */
+            width: 100%; /* Harita genişliği */
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Harita oluşturma
+        var map = L.map('map').setView([51.505, -0.09], 13); // Başlangıç koordinatları
+
+        // Harita katmanı ekleme
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Marker ekleme
+        var marker = L.marker([51.5, -0.09]).addTo(map);
+        marker.bindPopup('<b>Merhaba!</b><br>Ben bir markerım.').openPopup();
+    </script>
+</body>
+</html>

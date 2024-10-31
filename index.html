@@ -1,33 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-    <title>Leaflet Haritası</title>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rota Çizme Uygulaması</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
-        #map {
-            height: 500px; /* Harita yüksekliği */
-            width: 100%; /* Harita genişliği */
-        }
+        body { margin: 0; padding: 0; }
+        #map { height: 100vh; }
     </style>
 </head>
 <body>
-    <div id="map"></div>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        // Harita oluşturma
-        var map = L.map('map').setView([51.505, -0.09], 13); // Başlangıç koordinatları
 
-        // Harita katmanı ekleme
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
+<div id="map"></div>
 
-        // Marker ekleme
-        var marker = L.marker([51.5, -0.09]).addTo(map);
-        marker.bindPopup('<b>Merhaba!</b><br>Ben bir markerım.').openPopup();
-    </script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<script>
+    var map = L.map('map').setView([40.7128, -74.0060], 13); // Başlangıç konumu
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    function onLocationFound(e) {
+        var radius = e.accuracy / 2;
+
+        L.marker(e.latlng).addTo(map)
+            .bindPopup("Senin konumun").openPopup();
+
+        L.circle(e.latlng, radius).addTo(map);
+        map.setView(e.latlng, 13);
+    }
+
+    map.locate({setView: true, watch: true});
+    map.on('locationfound', onLocationFound);
+
+    var control = L.Routing.control({
+        waypoints: [],
+        routeWhileDragging: true,
+        geocoder: L.Control.Geocoder.nominatim()
+    }).addTo(map);
+
+    map.on('click', function(e) {
+        var latlng = e.latlng;
+        control.addWaypoint(control.getWaypoints().length, latlng);
+    });
+</script>
+
 </body>
 </html>
